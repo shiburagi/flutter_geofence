@@ -26,7 +26,7 @@ class AppDatabase {
   StoreRef get geofencesStore => intMapStoreFactory.store('geofences');
 
   // GEOFENCES : BEGIN
-  storeGeofence(Geofence s) async {
+  addGeofence(Geofence s) async {
     var store = geofencesStore;
     return await store.add(db, s.toJson());
   }
@@ -34,7 +34,7 @@ class AppDatabase {
   Future<List<Geofence>> getGeofences() async {
     var store = geofencesStore;
     List<RecordSnapshot> snapshots = await store.find(db);
-    return snapshots.map((e) => Geofence.fromJson(e as Map)).toList();
+    return snapshots.map((e) => Geofence.fromJson(e.value as Map)).toList();
   }
 
   Future<Geofence> getGeofence(String bssid) async {
