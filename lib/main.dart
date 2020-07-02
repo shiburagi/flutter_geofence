@@ -1,14 +1,24 @@
 import 'package:flutter/material.dart';
+import 'package:provider_boilerplate/provider_boilerplate.dart';
 import 'package:setel_geofence/pages/home.dart';
 import 'package:setel_geofence/pages/geofence_add.dart';
+import 'package:setel_geofence/resources/database.dart';
 
 void main() {
   runApp(MyApp());
 }
 
 Map<String, WidgetBuilder> routes = {
-  "/": (c) => HomePage(),
-  "/geofence/add": (c) => GeofenceAddPage(),
+  "/": (context) => SplashBuilder(
+        onStart: (context) async {
+          await AppDatabase.instance.init();
+          return true;
+        },
+        hasAccess: (access) => access,
+        landingRoute: "/home",
+      ),
+  "/home": (context) => HomePage(),
+  "/geofence/add": (context) => GeofenceAddPage(),
 };
 
 class MyApp extends StatelessWidget {
