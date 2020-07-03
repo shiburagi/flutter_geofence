@@ -5,8 +5,9 @@ import 'package:setel_geofence/resources/database.dart';
 import '../entities/geofence.dart';
 
 class GeofenceBloc extends BaseBloc<List<Geofence>> {
-  retrieveData() {
-    AppDatabase.instance.getGeofences().then((value) => sink.add(value));
+  retrieveData() async {
+    List<Geofence> geofences = await AppDatabase.instance.getGeofences();
+    sink.add(geofences);
   }
 
   Stream<List<Geofence>> startStream() {
@@ -53,9 +54,13 @@ class GeofenceBloc extends BaseBloc<List<Geofence>> {
     _geofence ??= Geofence();
     if (formKey.currentState.validate()) {
       await AppDatabase.instance.addGeofence(_geofence);
-      List<Geofence> geofences = await AppDatabase.instance.getGeofences();
       formKey.currentState.reset();
-      debugPrint("geofences: ${geofences.length}");
+      await retrieveData();
     }
+  }
+
+  delete(Geofence geofence) async {
+    if (await AppDatabase.instance.deleteGeofence(geofence) > 0)
+      await retrieveData();
   }
 }

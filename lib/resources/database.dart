@@ -44,10 +44,20 @@ class AppDatabase {
     return snapshot == null ? null : Geofence.fromJson(snapshot.value);
   }
 
-  Future deleteGeofence(int index) async {
+  Future deleteGeofenceAt(int index) async {
     var store = geofencesStore;
     try {
       return await store.record(index).delete(db);
+    } catch (e) {
+      return null;
+    }
+  }
+
+  Future<int> deleteGeofence(Geofence geofence) async {
+    var store = geofencesStore;
+    try {
+      return await store.delete(db,
+          finder: Finder(filter: Filter.equals("bssid", geofence.bssid)));
     } catch (e) {
       return null;
     }

@@ -30,6 +30,9 @@ class _GeofenceListPageState extends BlocState<GeofenceListPage, GeofenceBloc> {
                   title: Text(geofence.wifiName ?? geofence.bssid),
                   subtitle: Text(
                       "${geofence.latitude}, ${geofence.longitude} (${geofence.radius}km)"),
+                  trailing: IconButton(
+                      icon: Icon(Icons.delete),
+                      onPressed: () => bloc.delete(geofence)),
                 );
               },
               itemCount: bloc.data?.length ?? 0,
