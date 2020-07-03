@@ -14,7 +14,7 @@ import 'package:setel_geofence/resources/database.dart';
 class GeolocationBloc extends BaseBloc<Geofence> {
   static const String _isolateName = "LocatorIsolate";
   ReceivePort port;
-
+  LocationDto currentLocation;
   /*
    * Initialize port and server fro location service
    */
@@ -33,6 +33,7 @@ class GeolocationBloc extends BaseBloc<Geofence> {
         onDataReceive(data);
       });
       await initPlatformState();
+      networkListener();
     } catch (e, s) {
       debugPrint(s.toString());
     }
@@ -49,7 +50,7 @@ class GeolocationBloc extends BaseBloc<Geofence> {
     String wifiBSSID = await (Connectivity().getWifiBSSID());
     Geofence geofence = await AppDatabase.instance
         .getGeofenceNear(dto.latitude, dto.longitude, wifiBSSID);
-
+    currentLocation = dto;
     sink.add(geofence);
   }
 
@@ -58,6 +59,12 @@ class GeolocationBloc extends BaseBloc<Geofence> {
    */
   Future<void> initPlatformState() async {
     await BackgroundLocator.initialize();
+  }
+
+  networkListener() {
+    Connectivity().onConnectivityChanged.listen((ConnectivityResult result) {
+      if (currentLocation != null) onDataReceive(currentLocation);
+    });
   }
 
   static void callback(LocationDto locationDto) async {
