@@ -1,3 +1,6 @@
+import 'dart:developer';
+
+import 'package:flutter/cupertino.dart';
 import 'package:latlong/latlong.dart';
 import 'package:sembast/sembast.dart';
 import 'package:path/path.dart';
@@ -23,6 +26,7 @@ class AppDatabase {
   }
 
   StoreRef get geofencesStore => intMapStoreFactory.store('geofences');
+  StoreRef get locationStore => intMapStoreFactory.store('locations');
 
   // GEOFENCES : BEGIN
   addGeofence(Geofence s) async {
@@ -50,17 +54,25 @@ class AppDatabase {
 
     RecordSnapshot snapshot = await store.findFirst(db,
         finder: Finder(filter: Filter.custom((record) {
-      Geofence geofence = Geofence.fromJson(record.value);
-      final int meter = distance.as(
-        LengthUnit.Meter,
-        LatLng(geofence.latitude, geofence.longitude),
-        LatLng(latitude, longitude),
-      );
-      if (meter > geofence.radius || bssid == geofence.bssid) {
-        return true;
+      debugPrint("filter");
+      try {
+        Geofence geofence = Geofence.fromJson(record.value);
+        double meter = distance.as(
+          LengthUnit.Meter,
+          LatLng(geofence.latitude, geofence.longitude),
+          LatLng(latitude, longitude),
+        );
+        log("$meter, $bssid");
+        if (meter <= geofence.radius || bssid == geofence.bssid) {
+          return true;
+        }
+      } catch (e) {
+        debugPrint(e.toString());
       }
       return false;
     })));
+    debugPrint("filter: $snapshot");
+
     return snapshot == null ? null : Geofence.fromJson(snapshot.value);
   }
 
