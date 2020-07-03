@@ -1,5 +1,4 @@
-import 'dart:developer';
-
+import 'package:latlong/latlong.dart';
 import 'package:sembast/sembast.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
@@ -41,6 +40,27 @@ class AppDatabase {
     var store = geofencesStore;
     RecordSnapshot snapshot = await store.findFirst(db,
         finder: Finder(filter: Filter.equals("bssid", bssid)));
+    return snapshot == null ? null : Geofence.fromJson(snapshot.value);
+  }
+
+  Future<Geofence> getGeofenceNear(
+      double latitude, double longitude, String bssid) async {
+    var store = geofencesStore;
+    final Distance distance = const Distance();
+
+    RecordSnapshot snapshot = await store.findFirst(db,
+        finder: Finder(filter: Filter.custom((record) {
+      Geofence geofence = Geofence.fromJson(record.value);
+      final int meter = distance.as(
+        LengthUnit.Meter,
+        LatLng(geofence.latitude, geofence.longitude),
+        LatLng(latitude, longitude),
+      );
+      if (meter > geofence.radius || bssid == geofence.bssid) {
+        return true;
+      }
+      return false;
+    })));
     return snapshot == null ? null : Geofence.fromJson(snapshot.value);
   }
 

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:overlay_support/overlay_support.dart';
 import 'package:provider_boilerplate/provider_boilerplate.dart';
 import 'package:setel_geofence/bloc/geofence.dart';
+import 'package:setel_geofence/bloc/geolocation.dart';
 import 'package:setel_geofence/pages/geofence_list.dart';
 import 'package:setel_geofence/pages/home.dart';
 import 'package:setel_geofence/pages/geofence_add.dart';
@@ -32,6 +33,7 @@ class MyApp extends StatelessWidget {
     return ProviderBoilerplate(
       providers: [
         registerProvider(GeofenceBloc()),
+        registerProvider(GeolocationBloc()),
       ],
       child: OverlaySupport(
         child: MaterialApp(

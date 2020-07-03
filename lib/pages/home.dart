@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:provider_boilerplate/bloc/bloc_state.dart';
+import 'package:setel_geofence/bloc/geolocation.dart';
 
 class HomePage extends StatefulWidget {
   HomePage({Key key}) : super(key: key);
@@ -7,7 +9,13 @@ class HomePage extends StatefulWidget {
   _HomePageState createState() => _HomePageState();
 }
 
-class _HomePageState extends State<HomePage> {
+class _HomePageState extends BlocState<HomePage, GeolocationBloc> {
+  @override
+  void didChangeDependencies() {
+    bloc.init();
+    super.didChangeDependencies();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
