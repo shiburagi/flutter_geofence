@@ -29,9 +29,15 @@ class AppDatabase {
   StoreRef get locationStore => intMapStoreFactory.store('locations');
 
   // GEOFENCES : BEGIN
-  addGeofence(Geofence s) async {
+  addGeofence(Geofence geofence) async {
     var store = geofencesStore;
-    return await store.add(db, s.toJson());
+    return await store.add(db, geofence.toJson());
+  }
+
+  updateGeofence(Geofence geofence) async {
+    var store = geofencesStore;
+    return await store.update(db, geofence.toJson(),
+        finder: Finder(filter: Filter.equals("bssid", geofence.bssid)));
   }
 
   Future<List<Geofence>> getGeofences() async {

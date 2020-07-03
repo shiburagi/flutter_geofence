@@ -51,22 +51,36 @@ class GeofenceBloc extends BaseBloc<List<Geofence>> {
     return null;
   }
 
-  void addGeofence(GlobalKey<FormState> formKey) async {
+  void addGeofence(GlobalKey<FormState> formKey, [bool isEdit = false]) async {
     _geofence ??= Geofence();
     if (formKey.currentState.validate()) {
-      if (await AppDatabase.instance.getGeofence(_geofence.bssid) != null) {
+      if (!isEdit &&
+          await AppDatabase.instance.getGeofence(_geofence.bssid) != null) {
         showSimpleNotification(Text("BSSID already exist in the list."),
             background: Theme.of(context).errorColor);
         return;
       }
-      await AppDatabase.instance.addGeofence(_geofence);
+      if (isEdit) {
+        await AppDatabase.instance.updateGeofence(_geofence);
+        showSimpleNotification(Text("Geofence updated"),
+            background: Theme.of(context).accentColor);
+      } else
+        await AppDatabase.instance.addGeofence(_geofence);
+      showSimpleNotification(Text("Geofence saved"),
+          background: Theme.of(context).accentColor);
       formKey.currentState.reset();
       await retrieveData();
+
+      if (isEdit) Navigator.of(context).pop();
     }
   }
 
   delete(Geofence geofence) async {
     if (await AppDatabase.instance.deleteGeofence(geofence) > 0)
       await retrieveData();
+  }
+
+  edit(BuildContext context, Geofence geofence) {
+    Navigator.of(context).pushNamed("/geofence/add", arguments: geofence);
   }
 }

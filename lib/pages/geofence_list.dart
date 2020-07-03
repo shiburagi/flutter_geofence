@@ -26,13 +26,38 @@ class _GeofenceListPageState extends BlocState<GeofenceListPage, GeofenceBloc> {
             return ListView.builder(
               itemBuilder: (context, index) {
                 Geofence geofence = bloc.data[index];
-                return ListTile(
-                  title: Text(geofence.wifiName ?? geofence.bssid),
-                  subtitle: Text(
-                      "${geofence.latitude}, ${geofence.longitude} (${geofence.radius}km)"),
-                  trailing: IconButton(
-                      icon: Icon(Icons.delete),
-                      onPressed: () => bloc.delete(geofence)),
+                String radiusText;
+                if (geofence.radius >= 1000)
+                  radiusText = "${geofence.radius / 1000.0}km";
+                else
+                  radiusText = "${geofence.radius}m";
+                return Card(
+                  child: ListTile(
+                    contentPadding:
+                        EdgeInsets.symmetric(vertical: 8).copyWith(left: 16),
+                    title: Text(geofence.wifiName ?? geofence.bssid),
+                    subtitle: Text(
+                        "${geofence.latitude}, ${geofence.longitude} ($radiusText)"),
+                    trailing: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Container(
+                          height: 32,
+                          width: 1,
+                          color: Theme.of(context).dividerColor,
+                        ),
+                        IconButton(
+                            icon: Icon(Icons.edit),
+                            onPressed: () => bloc.edit(context, geofence)),
+                        IconButton(
+                            icon: Icon(
+                              Icons.delete,
+                              color: Theme.of(context).errorColor,
+                            ),
+                            onPressed: () => bloc.delete(geofence)),
+                      ],
+                    ),
+                  ),
                 );
               },
               itemCount: bloc.data?.length ?? 0,
