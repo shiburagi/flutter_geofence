@@ -39,6 +39,7 @@ class MyApp extends StatelessWidget {
           debugShowCheckedModeBanner: false,
           theme: ThemeData(
             primarySwatch: Colors.blue,
+            accentColor: Colors.teal,
             visualDensity: VisualDensity.adaptivePlatformDensity,
           ),
           routes: routes,
