@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:provider_boilerplate/bloc/bloc_state.dart';
 import 'package:setel_geofence/bloc/geofence.dart';
+import 'package:setel_geofence/views/loading.dart';
 
 class GeofenceAddPage extends StatefulWidget {
   GeofenceAddPage({Key key}) : super(key: key);
@@ -51,12 +52,14 @@ class _GeofenceAddPageState extends BlocState<GeofenceAddPage, GeofenceBloc> {
                                 .copyWith(fontWeight: FontWeight.bold))),
                     OutlineButton(
                       onPressed: () async {
+                        LoadingView.of(context).showLoader();
                         Position position = await Geolocator()
                             .getCurrentPosition(
                                 desiredAccuracy: LocationAccuracy.high);
 
                         latitudeController.text = "${position.latitude}";
                         longitudeController.text = "${position.longitude}";
+                        LoadingView.of(context).hideLoader();
                       },
                       child: Text("Using Current GPS"),
                     )
@@ -104,11 +107,14 @@ class _GeofenceAddPageState extends BlocState<GeofenceAddPage, GeofenceBloc> {
                                 .copyWith(fontWeight: FontWeight.bold))),
                     OutlineButton(
                       onPressed: () async {
+                        LoadingView.of(context).showLoader();
+
                         String wifiBSSID =
                             await (Connectivity().getWifiBSSID());
                         String wifiName = await (Connectivity().getWifiName());
                         wifiNameController.text = wifiName;
                         wifiBSSIDController.text = wifiBSSID;
+                        LoadingView.of(context).hideLoader();
                       },
                       child: Text("From connected WiFI"),
                     )

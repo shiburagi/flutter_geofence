@@ -6,6 +6,7 @@ import 'package:setel_geofence/pages/geofence_list.dart';
 import 'package:setel_geofence/pages/home.dart';
 import 'package:setel_geofence/pages/geofence_add.dart';
 import 'package:setel_geofence/resources/database.dart';
+import 'package:setel_geofence/views/loading.dart';
 
 void main() {
   runApp(MyApp());
@@ -22,7 +23,7 @@ Map<String, WidgetBuilder> routes = {
       ),
   "/home": (context) => HomePage(),
   "/geofence": (context) => GeofenceListPage(),
-  "/geofence/add": (context) => GeofenceAddPage(),
+  "/geofence/add": (context) => LoadingView(child: GeofenceAddPage()),
 };
 
 class MyApp extends StatelessWidget {
@@ -34,7 +35,8 @@ class MyApp extends StatelessWidget {
       ],
       child: OverlaySupport(
         child: MaterialApp(
-          title: 'Flutter Demo',
+          title: 'Setel Geofence',
+          debugShowCheckedModeBanner: false,
           theme: ThemeData(
             primarySwatch: Colors.blue,
             visualDensity: VisualDensity.adaptivePlatformDensity,
