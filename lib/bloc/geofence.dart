@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:overlay_support/overlay_support.dart';
 import 'package:provider_boilerplate/bloc/base_bloc.dart';
 import 'package:setel_geofence/resources/database.dart';
 
@@ -53,6 +54,11 @@ class GeofenceBloc extends BaseBloc<List<Geofence>> {
   void addGeofence(GlobalKey<FormState> formKey) async {
     _geofence ??= Geofence();
     if (formKey.currentState.validate()) {
+      if (await AppDatabase.instance.getGeofence(_geofence.bssid) != null) {
+        showSimpleNotification(Text("BSSID already exist in the list."),
+            background: Theme.of(context).errorColor);
+        return;
+      }
       await AppDatabase.instance.addGeofence(_geofence);
       formKey.currentState.reset();
       await retrieveData();

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:overlay_support/overlay_support.dart';
 import 'package:provider_boilerplate/provider_boilerplate.dart';
 import 'package:setel_geofence/bloc/geofence.dart';
 import 'package:setel_geofence/pages/geofence_list.dart';
@@ -31,13 +32,15 @@ class MyApp extends StatelessWidget {
       providers: [
         registerProvider(GeofenceBloc()),
       ],
-      child: MaterialApp(
-        title: 'Flutter Demo',
-        theme: ThemeData(
-          primarySwatch: Colors.blue,
-          visualDensity: VisualDensity.adaptivePlatformDensity,
+      child: OverlaySupport(
+        child: MaterialApp(
+          title: 'Flutter Demo',
+          theme: ThemeData(
+            primarySwatch: Colors.blue,
+            visualDensity: VisualDensity.adaptivePlatformDensity,
+          ),
+          routes: routes,
         ),
-        routes: routes,
       ),
     );
   }
