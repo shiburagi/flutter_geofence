@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider_boilerplate/provider_boilerplate.dart';
 import 'package:setel_geofence/bloc/geofence.dart';
+import 'package:setel_geofence/pages/geofence_list.dart';
 import 'package:setel_geofence/pages/home.dart';
 import 'package:setel_geofence/pages/geofence_add.dart';
 import 'package:setel_geofence/resources/database.dart';
@@ -19,6 +20,7 @@ Map<String, WidgetBuilder> routes = {
         landingRoute: "/home",
       ),
   "/home": (context) => HomePage(),
+  "/geofence": (context) => GeofenceListPage(),
   "/geofence/add": (context) => GeofenceAddPage(),
 };
 

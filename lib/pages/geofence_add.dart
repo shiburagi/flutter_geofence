@@ -27,6 +27,7 @@ class _GeofenceAddPageState extends BlocState<GeofenceAddPage, GeofenceBloc> {
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       floatingActionButton: FloatingActionButton.extended(
+        heroTag: "action_geofence",
         onPressed: () => bloc.addGeofence(formKey),
         label: Text("Add"),
         icon: Icon(Icons.add),

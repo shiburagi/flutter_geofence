@@ -14,11 +14,11 @@ class _HomePageState extends State<HomePage> {
       appBar: AppBar(),
       body: SingleChildScrollView(),
       floatingActionButton: FloatingActionButton.extended(
-        heroTag: "add_geofence",
+        heroTag: "action_geofence",
         onPressed: () {
-          Navigator.of(context).pushNamed("/geofence/add");
+          Navigator.of(context).pushNamed("/geofence");
         },
-        label: Text("Add Geofence"),
+        label: Text("Geofence List"),
         icon: Icon(Icons.my_location),
       ),
     );
