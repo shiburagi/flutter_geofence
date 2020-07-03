@@ -18,6 +18,7 @@ class _GeofenceListPageState extends BlocState<GeofenceListPage, GeofenceBloc> {
         title: Text("Geofence List"),
       ),
       floatingActionButton: FloatingActionButton.extended(
+          key: const Key("add geofence"),
           heroTag: "action_geofence",
           onPressed: () => Navigator.of(context).pushNamed("/geofence/add"),
           icon: Icon(Icons.add),
@@ -60,7 +61,10 @@ class _GeofenceListPageState extends BlocState<GeofenceListPage, GeofenceBloc> {
           child: ListTile(
             contentPadding:
                 EdgeInsets.symmetric(vertical: 8).copyWith(left: 16),
-            title: Text(geofence.wifiName ?? geofence.bssid),
+            title: Text(
+              geofence.wifiName ?? geofence.bssid,
+              key: const Key("WiFi name"),
+            ),
             subtitle: Text(
                 "${geofence.latitude}, ${geofence.longitude} ($radiusText)"),
             trailing: Row(

@@ -27,6 +27,7 @@ class _HomePageState extends BlocState<HomePage, GeolocationBloc> {
         child: buildMainContent(),
       ),
       floatingActionButton: FloatingActionButton.extended(
+        key: const Key("geofence list"),
         heroTag: "action_geofence",
         onPressed: () {
           Navigator.of(context).pushNamed("/geofence");

@@ -44,6 +44,7 @@ class _GeofenceAddPageState extends BlocState<GeofenceAddPage, GeofenceBloc> {
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       floatingActionButton: FloatingActionButton.extended(
+        key: const Key("submit"),
         heroTag: "action_geofence",
         onPressed: () => bloc.addGeofence(formKey, isEdit),
         label: Text(isEdit ? "Save" : "Create"),
@@ -73,6 +74,7 @@ class _GeofenceAddPageState extends BlocState<GeofenceAddPage, GeofenceBloc> {
                             .headline6
                             .copyWith(fontWeight: FontWeight.bold))),
                 OutlineButton(
+                  key: const Key("using current GPS"),
                   onPressed: () async {
                     LoadingView.of(context).showLoader();
                     Position position = await Geolocator().getCurrentPosition(
@@ -89,6 +91,7 @@ class _GeofenceAddPageState extends BlocState<GeofenceAddPage, GeofenceBloc> {
               children: [
                 Expanded(
                   child: buildTextField(
+                    key: const Key("latitude"),
                     label: "Latitude",
                     controller: latitudeController,
                     validator: bloc.latitudeValidator,
@@ -100,6 +103,7 @@ class _GeofenceAddPageState extends BlocState<GeofenceAddPage, GeofenceBloc> {
                 ),
                 Expanded(
                   child: buildTextField(
+                    key: const Key("longitude"),
                     label: "Longitude",
                     controller: longitudeController,
                     validator: bloc.longitudeValidator,
@@ -109,6 +113,7 @@ class _GeofenceAddPageState extends BlocState<GeofenceAddPage, GeofenceBloc> {
               ],
             ),
             buildTextField(
+              key: const Key("radius"),
               label: "Radius",
               controller: radiusController,
               validator: bloc.radiusValidator,
@@ -126,6 +131,7 @@ class _GeofenceAddPageState extends BlocState<GeofenceAddPage, GeofenceBloc> {
                             .headline6
                             .copyWith(fontWeight: FontWeight.bold))),
                 OutlineButton(
+                  key: const Key("from connected WiFi"),
                   onPressed: () async {
                     LoadingView.of(context).showLoader();
 
@@ -135,17 +141,19 @@ class _GeofenceAddPageState extends BlocState<GeofenceAddPage, GeofenceBloc> {
                     wifiBSSIDController.text = wifiBSSID;
                     LoadingView.of(context).hideLoader();
                   },
-                  child: Text("From connected WiFI"),
+                  child: Text("From connected WiFi"),
                 )
               ],
             ),
             buildTextField(
+              key: const Key("WiFi name"),
               label: "Name",
               controller: wifiNameController,
               validator: bloc.wifiNameValidator,
               keyboardType: TextInputType.text,
             ),
             buildTextField(
+              key: const Key("BSSID"),
               label: "BSSID",
               controller: wifiBSSIDController,
               validator: bloc.bssidValidator,
@@ -158,6 +166,7 @@ class _GeofenceAddPageState extends BlocState<GeofenceAddPage, GeofenceBloc> {
   }
 
   Widget buildTextField({
+    Key key,
     String label,
     Function validator,
     TextInputType keyboardType,
@@ -166,6 +175,7 @@ class _GeofenceAddPageState extends BlocState<GeofenceAddPage, GeofenceBloc> {
     return Container(
       padding: EdgeInsets.only(bottom: 8),
       child: TextFormField(
+        key: key,
         controller: controller,
         validator: validator,
         keyboardType: keyboardType,
