@@ -73,16 +73,20 @@ class _HomePageState extends BlocState<HomePage, GeolocationBloc>
               mainAxisSize: MainAxisSize.min,
               children: [
                 Container(
-                  decoration: BoxDecoration(border: Border.all(color: color)),
+                  decoration: BoxDecoration(
+                      border: Border.all(color: color), color: color),
                   padding: EdgeInsets.symmetric(horizontal: 24, vertical: 16),
                   child: Text(
                     isInside ? "Inside" : "Outside",
                     key: const Key("status"),
                     style: Theme.of(context)
                         .textTheme
-                        .headline6
-                        .copyWith(color: color),
+                        .headline5
+                        .copyWith(color: Colors.white),
                   ),
+                ),
+                SizedBox(
+                  height: 16,
                 ),
                 Divider(
                   height: 32,
@@ -90,7 +94,8 @@ class _HomePageState extends BlocState<HomePage, GeolocationBloc>
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    buildIndicator("Location", bloc.isLocationActive),
+                    buildIndicator("Location", bloc.isLocationActive,
+                        onRefresh: bloc.init),
                     buildIndicator("WiFi", bloc.isWifiActive),
                   ],
                 ),
@@ -102,7 +107,7 @@ class _HomePageState extends BlocState<HomePage, GeolocationBloc>
     );
   }
 
-  Widget buildIndicator(String label, bool isActive) {
+  Widget buildIndicator(String label, bool isActive, {Function onRefresh}) {
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       child: Row(
@@ -122,6 +127,31 @@ class _HomePageState extends BlocState<HomePage, GeolocationBloc>
           SizedBox(
             width: 16,
           ),
+          ...onRefresh == null
+              ? []
+              : [
+                  Container(
+                    width: 64,
+                    child: ButtonTheme(
+                      height: 24,
+                      padding: EdgeInsets.all(0),
+                      child: OutlineButton(
+                        borderSide: BorderSide(color: Colors.green),
+                        child: Text(
+                          "Refresh",
+                          style: Theme.of(context)
+                              .textTheme
+                              .caption
+                              .copyWith(color: Colors.green),
+                        ),
+                        onPressed: onRefresh,
+                      ),
+                    ),
+                  ),
+                  SizedBox(
+                    width: 16,
+                  )
+                ],
         ],
       ),
     );
