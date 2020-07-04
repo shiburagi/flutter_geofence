@@ -19,7 +19,7 @@ samples, guidance on mobile development, and a full API reference.
 
 ## Testing
 The project using flutter_driver and [flutter_gherkin](https://pub.dev/packages/flutter_gherkin) for execute automation testing.
-Gherkin or Cucumber able to support **Behaviour-Driven Development(BDD)**, which is help people understand what the script for.
+Gherkin or Cucumber able to support **Behaviour-Driven Development(BDD)**, which is make test script more understandable.
 
 All the list of features are available in https://github.com/shiburagi/setel_geofence/tree/master/test_driver/features.
 
