@@ -57,13 +57,15 @@ class _GeofenceListPageState extends BlocState<GeofenceListPage, GeofenceBloc> {
           radiusText = "${geofence.radius / 1000.0}km";
         else
           radiusText = "${geofence.radius}m";
+
+        String keyId = geofence.bssid;
         return Card(
           child: ListTile(
             contentPadding:
                 EdgeInsets.symmetric(vertical: 8).copyWith(left: 16),
             title: Text(
               geofence.wifiName ?? geofence.bssid,
-              key: const Key("WiFi name"),
+              key: Key("$keyId"),
             ),
             subtitle: Text(
                 "${geofence.latitude}, ${geofence.longitude} ($radiusText)"),
@@ -76,9 +78,11 @@ class _GeofenceListPageState extends BlocState<GeofenceListPage, GeofenceBloc> {
                   color: Theme.of(context).dividerColor,
                 ),
                 IconButton(
+                    key: Key("$keyId edit"),
                     icon: Icon(Icons.edit),
                     onPressed: () => bloc.edit(context, geofence)),
                 IconButton(
+                    key: Key("$keyId delete"),
                     icon: Icon(
                       Icons.delete,
                       color: Theme.of(context).errorColor,

@@ -1,6 +1,5 @@
 import 'dart:developer';
 
-import 'package:flutter/cupertino.dart';
 import 'package:latlong/latlong.dart';
 import 'package:sembast/sembast.dart';
 import 'package:path/path.dart';
@@ -72,12 +71,9 @@ class AppDatabase {
         if (meter <= geofence.radius || bssid == geofence.bssid) {
           return true;
         }
-      } catch (e) {
-        debugPrint(e.toString());
-      }
+      } catch (e) {}
       return false;
     })));
-    debugPrint("filter: $snapshot");
 
     return snapshot == null ? null : Geofence.fromJson(snapshot.value);
   }
@@ -100,6 +96,10 @@ class AppDatabase {
       return null;
     }
   }
+
   // GEOFENCES : END
 
+  clear() async {
+    await StoreRef.main().delete(db);
+  }
 }

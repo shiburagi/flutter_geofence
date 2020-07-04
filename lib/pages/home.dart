@@ -30,7 +30,6 @@ class _HomePageState extends BlocState<HomePage, GeolocationBloc>
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     if (state == AppLifecycleState.resumed) {
-      log("onResume");
       bloc.init();
     }
   }
@@ -78,6 +77,7 @@ class _HomePageState extends BlocState<HomePage, GeolocationBloc>
                   padding: EdgeInsets.symmetric(horizontal: 24, vertical: 16),
                   child: Text(
                     isInside ? "Inside" : "Outside",
+                    key: const Key("status"),
                     style: Theme.of(context)
                         .textTheme
                         .headline6

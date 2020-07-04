@@ -6,7 +6,7 @@ class ListingStep extends Given1WithWorld<String, FlutterWorld> {
   @override
   Future<void> executeStep(String text) async {
     // implement your code
-    world.driver.getText(find.text(text));
+    await world.driver.getText(find.text(text));
   }
 
   @override

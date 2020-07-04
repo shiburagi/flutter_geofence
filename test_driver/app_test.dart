@@ -3,6 +3,7 @@ import 'package:flutter_gherkin/flutter_gherkin.dart';
 import 'package:gherkin/gherkin.dart';
 import 'package:glob/glob.dart';
 
+import 'hooks/custom.dart';
 import 'steps/list.dart';
 import 'steps/navigation.dart';
 
@@ -13,6 +14,8 @@ Future<void> main() {
       NavigationStep(),
       ListingStep(),
     ]
+    ..hooks = [CustomHooks()]
+    ..order = ExecutionOrder.sequential
     ..reporters = [
       ProgressReporter(),
       TestRunSummaryReporter(),

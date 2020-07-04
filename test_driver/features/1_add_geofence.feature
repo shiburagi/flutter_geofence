@@ -11,4 +11,4 @@ Feature: Add Geofence
     Then I tap the "submit" button
     And I pause for 3 seconds
     Then I click back button
-    And I expect "Test Wifi Name" exists in the list
+    And I expect the "13:45:14:32:55:99" to be "Test Wifi Name"
