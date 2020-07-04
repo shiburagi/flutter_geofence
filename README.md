@@ -1,4 +1,4 @@
-# setel_geofence
+# setel geofence
 
 ## Getting Started
 
