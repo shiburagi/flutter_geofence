@@ -28,23 +28,35 @@ class AppDatabase {
   StoreRef get locationStore => intMapStoreFactory.store('locations');
 
   // GEOFENCES : BEGIN
+  /*
+   * add geofence data
+   */
   addGeofence(Geofence geofence) async {
     var store = geofencesStore;
     return await store.add(db, geofence.toJson());
   }
 
+  /*
+   * update geofence with new geofence data by bssid
+   */
   updateGeofence(String bssid, Geofence geofence) async {
     var store = geofencesStore;
     return await store.update(db, geofence.toJson(),
         finder: Finder(filter: Filter.equals("bssid", bssid)));
   }
 
+  /*
+   * get all geofennce from DB
+   */
   Future<List<Geofence>> getGeofences() async {
     var store = geofencesStore;
     List<RecordSnapshot> snapshots = await store.find(db);
     return snapshots.map((e) => Geofence.fromJson(e.value as Map)).toList();
   }
 
+  /*
+   * get single geofence data from DB by bssid
+   */
   Future<Geofence> getGeofence(String bssid) async {
     var store = geofencesStore;
     RecordSnapshot snapshot = await store.findFirst(db,
@@ -52,6 +64,10 @@ class AppDatabase {
     return snapshot == null ? null : Geofence.fromJson(snapshot.value);
   }
 
+  /*
+  * get single geofence data from DB by calculate the latlng in the radius
+  * or the bssid exist in the record
+  */
   Future<Geofence> getGeofenceNear(LatLng latLng, String bssid) async {
     var store = geofencesStore;
     final Distance distance = const Distance();
@@ -60,14 +76,12 @@ class AppDatabase {
         finder: Finder(filter: Filter.custom((record) {
       try {
         Geofence geofence = Geofence.fromJson(record.value);
-        log("$latLng");
 
         double meter = distance.as(
           LengthUnit.Meter,
           LatLng(geofence.latitude, geofence.longitude),
           latLng,
         );
-        log("$meter, $bssid");
         if (meter <= geofence.radius || bssid == geofence.bssid) {
           return true;
         }
@@ -78,6 +92,9 @@ class AppDatabase {
     return snapshot == null ? null : Geofence.fromJson(snapshot.value);
   }
 
+  /*
+   * delete geofence by index
+   */
   Future deleteGeofenceAt(int index) async {
     var store = geofencesStore;
     try {
@@ -87,6 +104,9 @@ class AppDatabase {
     }
   }
 
+  /*
+   * delete geofence by geofence 
+   */
   Future<int> deleteGeofence(Geofence geofence) async {
     var store = geofencesStore;
     try {

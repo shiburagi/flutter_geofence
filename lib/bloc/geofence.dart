@@ -59,6 +59,7 @@ class GeofenceBloc extends BaseBloc<List<Geofence>> {
     if (formKey.currentState.validate()) {
       if (!isEdit &&
           await AppDatabase.instance.getGeofence(_geofence.bssid) != null) {
+        //check if the bssid already exist in DB
         showSimpleNotification(Text("BSSID already exist in the list."),
             background: Theme.of(context).errorColor);
         return;
@@ -81,11 +82,17 @@ class GeofenceBloc extends BaseBloc<List<Geofence>> {
     }
   }
 
+  /*
+   * Method to trigger remove action and delete geofence record in db
+   */
   delete(Geofence geofence) async {
     if (await AppDatabase.instance.deleteGeofence(geofence) > 0)
       await retrieveData();
   }
 
+  /*
+   * Method to trigger edit action
+   */
   edit(BuildContext context, Geofence geofence) {
     Navigator.of(context).pushNamed("/geofence/add", arguments: geofence);
   }
