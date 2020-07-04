@@ -22,16 +22,17 @@ class _GeofenceAddPageState extends BlocState<GeofenceAddPage, GeofenceBloc> {
   TextEditingController wifiBSSIDController = TextEditingController();
 
   bool isEdit = false;
+  Geofence _referGeofence;
   @override
   void didChangeDependencies() {
-    Geofence geofence = ModalRoute.of(context).settings.arguments;
-    isEdit = geofence != null;
+    _referGeofence = ModalRoute.of(context).settings.arguments;
+    isEdit = _referGeofence != null;
     if (isEdit) {
-      latitudeController.text = geofence.latitude.toString();
-      longitudeController.text = geofence.longitude.toString();
-      radiusController.text = geofence.radius.toString();
-      wifiNameController.text = geofence.wifiName.toString();
-      wifiBSSIDController.text = geofence.bssid.toString();
+      latitudeController.text = _referGeofence.latitude.toString();
+      longitudeController.text = _referGeofence.longitude.toString();
+      radiusController.text = _referGeofence.radius.toString();
+      wifiNameController.text = _referGeofence.wifiName.toString();
+      wifiBSSIDController.text = _referGeofence.bssid.toString();
     }
     super.didChangeDependencies();
   }
@@ -46,7 +47,8 @@ class _GeofenceAddPageState extends BlocState<GeofenceAddPage, GeofenceBloc> {
       floatingActionButton: FloatingActionButton.extended(
         key: const Key("submit"),
         heroTag: "action_geofence",
-        onPressed: () => bloc.addGeofence(formKey, isEdit),
+        onPressed: () =>
+            bloc.addGeofence(formKey, referGeofence: _referGeofence),
         label: Text(isEdit ? "Save" : "Create"),
         icon: Icon(Icons.done),
       ),

@@ -34,10 +34,10 @@ class AppDatabase {
     return await store.add(db, geofence.toJson());
   }
 
-  updateGeofence(Geofence geofence) async {
+  updateGeofence(String bssid, Geofence geofence) async {
     var store = geofencesStore;
     return await store.update(db, geofence.toJson(),
-        finder: Finder(filter: Filter.equals("bssid", geofence.bssid)));
+        finder: Finder(filter: Filter.equals("bssid", bssid)));
   }
 
   Future<List<Geofence>> getGeofences() async {

@@ -17,6 +17,7 @@ class GeofenceBloc extends BaseBloc<List<Geofence>> {
   }
 
   Geofence _geofence;
+  set geofence(geofence) => this._geofence = geofence;
   String bssidValidator(String value) {
     if (value.isEmpty) return "BSSID is required";
 
@@ -51,7 +52,9 @@ class GeofenceBloc extends BaseBloc<List<Geofence>> {
     return null;
   }
 
-  void addGeofence(GlobalKey<FormState> formKey, [bool isEdit = false]) async {
+  void addGeofence(GlobalKey<FormState> formKey,
+      {Geofence referGeofence}) async {
+    bool isEdit = referGeofence != null;
     _geofence ??= Geofence();
     if (formKey.currentState.validate()) {
       if (!isEdit &&
@@ -61,17 +64,20 @@ class GeofenceBloc extends BaseBloc<List<Geofence>> {
         return;
       }
       if (isEdit) {
-        await AppDatabase.instance.updateGeofence(_geofence);
+        await AppDatabase.instance
+            .updateGeofence(referGeofence.bssid, _geofence);
         showSimpleNotification(Text("Geofence updated"),
             background: Theme.of(context).accentColor);
       } else
         await AppDatabase.instance.addGeofence(_geofence);
       showSimpleNotification(Text("Geofence saved"),
           background: Theme.of(context).accentColor);
-      formKey.currentState.reset();
       await retrieveData();
 
-      if (isEdit) Navigator.of(context).pop();
+      if (isEdit)
+        Navigator.of(context).pop();
+      else
+        formKey.currentState.reset();
     }
   }
 
