@@ -1,7 +1,7 @@
 Feature: Add Geofence
   The app should be able add new geofence
   Scenario: Create new geofence
-    Given I pause for 30 seconds
+    Given I pause for 5 seconds
     When I tap the "geofence list" button
     And I tap the "add geofence" button
     And I tap the "using current GPS" button
