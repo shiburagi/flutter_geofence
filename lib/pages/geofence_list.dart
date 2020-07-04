@@ -26,7 +26,7 @@ class _GeofenceListPageState extends BlocState<GeofenceListPage, GeofenceBloc> {
       body: StreamBuilder<List<Geofence>>(
           stream: bloc.startStream(),
           builder: (context, snapshot) {
-            return snapshot.data?.isEmpty ?? true
+            return bloc.data?.isEmpty ?? true
                 ? Center(
                     child: Card(
                       margin: EdgeInsets.all(8).copyWith(bottom: 32),

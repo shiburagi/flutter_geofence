@@ -1,6 +1,6 @@
 import 'package:connectivity/connectivity.dart';
 import 'package:flutter/material.dart';
-import 'package:geolocator/geolocator.dart';
+import 'package:location/location.dart';
 import 'package:provider_boilerplate/bloc/bloc_state.dart';
 import 'package:setel_geofence/bloc/geofence.dart';
 import 'package:setel_geofence/entities/geofence.dart';
@@ -77,8 +77,7 @@ class _GeofenceAddPageState extends BlocState<GeofenceAddPage, GeofenceBloc> {
                   key: const Key("using current GPS"),
                   onPressed: () async {
                     LoadingView.of(context).showLoader();
-                    Position position = await Geolocator().getCurrentPosition(
-                        desiredAccuracy: LocationAccuracy.high);
+                    LocationData position = await Location().getLocation();
                     latitudeController.text = "${position.latitude}";
                     longitudeController.text = "${position.longitude}";
                     LoadingView.of(context).hideLoader();
@@ -134,9 +133,9 @@ class _GeofenceAddPageState extends BlocState<GeofenceAddPage, GeofenceBloc> {
                   key: const Key("from connected WiFi"),
                   onPressed: () async {
                     LoadingView.of(context).showLoader();
-
-                    String wifiBSSID = await (Connectivity().getWifiBSSID());
-                    String wifiName = await (Connectivity().getWifiName());
+                    Connectivity connectivity = Connectivity();
+                    String wifiBSSID = await connectivity.getWifiBSSID();
+                    String wifiName = await connectivity.getWifiName();
                     wifiNameController.text = wifiName;
                     wifiBSSIDController.text = wifiBSSID;
                     LoadingView.of(context).hideLoader();

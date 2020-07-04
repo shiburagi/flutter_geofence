@@ -1,3 +1,6 @@
+import 'dart:developer';
+
+import 'package:connectivity/connectivity.dart';
 import 'package:flutter/material.dart';
 import 'package:provider_boilerplate/bloc/bloc_state.dart';
 import 'package:setel_geofence/bloc/geolocation.dart';
@@ -10,11 +13,26 @@ class HomePage extends StatefulWidget {
   _HomePageState createState() => _HomePageState();
 }
 
-class _HomePageState extends BlocState<HomePage, GeolocationBloc> {
+class _HomePageState extends BlocState<HomePage, GeolocationBloc>
+    with WidgetsBindingObserver {
+  @override
+  void initState() {
+    WidgetsBinding.instance.addObserver(this);
+    super.initState();
+  }
+
   @override
   void didChangeDependencies() {
     bloc.init();
     super.didChangeDependencies();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      log("onResume");
+      bloc.init();
+    }
   }
 
   @override
@@ -50,20 +68,62 @@ class _HomePageState extends BlocState<HomePage, GeolocationBloc> {
                   Scaffold.of(context).appBarMaxHeight -
                   32),
           child: Center(
-            child: Container(
-              decoration: BoxDecoration(border: Border.all(color: color)),
-              padding: EdgeInsets.symmetric(horizontal: 24, vertical: 16),
-              child: Text(
-                isInside ? "Inside" : "Outside",
-                style: Theme.of(context)
-                    .textTheme
-                    .headline6
-                    .copyWith(color: color),
-              ),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Container(
+                  decoration: BoxDecoration(border: Border.all(color: color)),
+                  padding: EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+                  child: Text(
+                    isInside ? "Inside" : "Outside",
+                    style: Theme.of(context)
+                        .textTheme
+                        .headline6
+                        .copyWith(color: color),
+                  ),
+                ),
+                Divider(
+                  height: 32,
+                ),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    buildIndicator("Location", bloc.isLocationActive),
+                    buildIndicator("WiFi", bloc.isWifiActive),
+                  ],
+                ),
+              ],
             ),
           ),
         );
       },
+    );
+  }
+
+  Widget buildIndicator(String label, bool isActive) {
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Container(
+            width: 16,
+            height: 16,
+            decoration: BoxDecoration(
+                color: isActive ? Colors.green : Colors.red,
+                shape: BoxShape.circle),
+          ),
+          SizedBox(
+            width: 16,
+          ),
+          Text(label),
+          SizedBox(
+            width: 16,
+          ),
+        ],
+      ),
     );
   }
 }

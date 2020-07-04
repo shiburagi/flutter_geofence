@@ -6,7 +6,8 @@ import 'package:background_locator/location_dto.dart';
 import 'package:background_locator/location_settings.dart';
 import 'package:connectivity/connectivity.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:permission_handler/permission_handler.dart';
+import 'package:latlong/latlong.dart';
+import 'package:location/location.dart';
 import 'package:provider_boilerplate/bloc/base_bloc.dart';
 import 'package:setel_geofence/entities/geofence.dart';
 import 'package:setel_geofence/resources/database.dart';
@@ -14,22 +15,72 @@ import 'package:setel_geofence/resources/database.dart';
 class GeolocationBloc extends BaseBloc<Geofence> {
   static const String _isolateName = "LocatorIsolate";
   ReceivePort port;
-  LocationDto currentLocation;
+  LatLng currentLocation;
+  Location location;
+  bool isWifiActive = false;
+  bool isLocationActive = false;
+  bool _serviceEnabled = false;
+  PermissionStatus _permissionGranted;
   /*
-   * Initialize port and server fro location service
+   * Initialize location changed listener
    */
   init() async {
+    location = Location();
+    location.changeSettings(
+      distanceFilter: 10,
+    );
+    _permissionGranted = await location.hasPermission();
+    if (_permissionGranted == PermissionStatus.denied) {
+      _permissionGranted = await location.requestPermission();
+      if (_permissionGranted != PermissionStatus.granted) {
+        return;
+      }
+    }
+
+    isLocationActive = await location.serviceEnabled();
+    if (!isLocationActive) {
+      sink.add(null);
+      return;
+    }
+    if (_serviceEnabled == isLocationActive) {
+      return;
+    }
+
+    _serviceEnabled = isLocationActive;
+
+    try {
+      location.onLocationChanged.listen(onLocationListen);
+      networkListener();
+    } catch (e, s) {
+      debugPrint(s.toString());
+    }
+  }
+
+  /*
+   * Method to receive new location data
+   */
+  onLocationListen(event) async {
+    debugPrint("listen $event");
+    try {
+      isLocationActive = await location.serviceEnabled();
+      LatLng latLng = LatLng(event.latitude, event.longitude);
+      onDataReceive(latLng);
+    } catch (e) {
+      debugPrint(e.toString());
+    }
+  }
+
+  /*
+   * Initialize port and server for background location service
+   */
+  initBackgroundLocation() async {
     if (port != null) return;
-    await Permission.location.request();
     if (await BackgroundLocator.isRegisterLocationUpdate())
       stopLocationService();
     try {
-      debugPrint("init");
       port = ReceivePort();
       IsolateNameServer.registerPortWithName(port.sendPort, _isolateName);
       port.listen((dynamic data) {
-        debugPrint("listen");
-
         onDataReceive(data);
       });
       await initPlatformState();
@@ -37,7 +88,6 @@ class GeolocationBloc extends BaseBloc<Geofence> {
     } catch (e, s) {
       debugPrint(s.toString());
     }
-    debugPrint("init end");
     startLocationService();
   }
 
@@ -45,12 +95,20 @@ class GeolocationBloc extends BaseBloc<Geofence> {
    * Method to handle location data and retrieve nearest geofence,
    * If none, return null
    */
-  Future onDataReceive(LocationDto dto) async {
+  Future onDataReceive(LatLng latLng) async {
     debugPrint("onDataReceive");
-    String wifiBSSID = await (Connectivity().getWifiBSSID());
-    Geofence geofence = await AppDatabase.instance
-        .getGeofenceNear(dto.latitude, dto.longitude, wifiBSSID);
-    currentLocation = dto;
+    Connectivity connectivity = Connectivity();
+    String wifiBSSID;
+    if ((await connectivity.checkConnectivity()) == ConnectivityResult.wifi) {
+      isWifiActive = true;
+      wifiBSSID = await connectivity.getWifiBSSID();
+    } else {
+      isWifiActive = false;
+    }
+    Geofence geofence =
+        await AppDatabase.instance.getGeofenceNear(latLng, wifiBSSID);
+    currentLocation = latLng;
+
     sink.add(geofence);
   }
 
@@ -80,7 +138,6 @@ class GeolocationBloc extends BaseBloc<Geofence> {
   void startLocationService() {
     BackgroundLocator.registerLocationUpdate(
       callback,
-      //optional
       androidNotificationCallback: notificationCallback,
       settings: LocationSettings(
           notificationTitle: "Setel Geofence",

@@ -53,20 +53,20 @@ class AppDatabase {
     return snapshot == null ? null : Geofence.fromJson(snapshot.value);
   }
 
-  Future<Geofence> getGeofenceNear(
-      double latitude, double longitude, String bssid) async {
+  Future<Geofence> getGeofenceNear(LatLng latLng, String bssid) async {
     var store = geofencesStore;
     final Distance distance = const Distance();
 
     RecordSnapshot snapshot = await store.findFirst(db,
         finder: Finder(filter: Filter.custom((record) {
-      debugPrint("filter");
       try {
         Geofence geofence = Geofence.fromJson(record.value);
+        log("$latLng");
+
         double meter = distance.as(
           LengthUnit.Meter,
           LatLng(geofence.latitude, geofence.longitude),
-          LatLng(latitude, longitude),
+          latLng,
         );
         log("$meter, $bssid");
         if (meter <= geofence.radius || bssid == geofence.bssid) {
