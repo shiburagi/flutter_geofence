@@ -14,42 +14,44 @@ import 'package:setel_geofence/resources/database.dart';
 
 class GeolocationBloc extends BaseBloc<Geofence> {
   static const String _isolateName = "LocatorIsolate";
-  ReceivePort port;
-  LatLng currentLocation;
-  Location location;
-  bool isWifiActive = false;
-  bool isLocationActive = false;
+  ReceivePort _port;
+  LatLng _currentLocation;
+  Location _location;
+  bool _isWifiActive = false;
+  bool get isWifiActive => _isWifiActive;
+  bool _isLocationActive = false;
+  bool get isLocationActive => _isLocationActive;
   bool _serviceEnabled = false;
   PermissionStatus _permissionGranted;
   /*
    * Initialize location changed listener
    */
   init() async {
-    location = Location();
-    location.changeSettings(
+    _location = Location();
+    _location.changeSettings(
       distanceFilter: 10,
     );
-    _permissionGranted = await location.hasPermission();
+    _permissionGranted = await _location.hasPermission();
     if (_permissionGranted == PermissionStatus.denied) {
-      _permissionGranted = await location.requestPermission();
+      _permissionGranted = await _location.requestPermission();
       if (_permissionGranted != PermissionStatus.granted) {
         return;
       }
     }
 
-    isLocationActive = await location.serviceEnabled();
-    if (!isLocationActive) {
+    _isLocationActive = await _location.serviceEnabled();
+    if (!_isLocationActive) {
       sink.add(null);
       return;
     }
-    if (_serviceEnabled == isLocationActive) {
+    if (_serviceEnabled == _isLocationActive) {
       return;
     }
 
-    _serviceEnabled = isLocationActive;
+    _serviceEnabled = _isLocationActive;
 
     try {
-      location.onLocationChanged.listen(onLocationListen);
+      _location.onLocationChanged.listen(onLocationListen);
       networkListener();
     } catch (e, s) {
       debugPrint(s.toString());
@@ -62,7 +64,7 @@ class GeolocationBloc extends BaseBloc<Geofence> {
   onLocationListen(event) async {
     debugPrint("listen $event");
     try {
-      isLocationActive = await location.serviceEnabled();
+      _isLocationActive = await _location.serviceEnabled();
       LatLng latLng = LatLng(event.latitude, event.longitude);
       onDataReceive(latLng);
     } catch (e) {
@@ -74,13 +76,13 @@ class GeolocationBloc extends BaseBloc<Geofence> {
    * Initialize port and server for background location service
    */
   initBackgroundLocation() async {
-    if (port != null) return;
+    if (_port != null) return;
     if (await BackgroundLocator.isRegisterLocationUpdate())
       stopLocationService();
     try {
-      port = ReceivePort();
-      IsolateNameServer.registerPortWithName(port.sendPort, _isolateName);
-      port.listen((dynamic data) {
+      _port = ReceivePort();
+      IsolateNameServer.registerPortWithName(_port.sendPort, _isolateName);
+      _port.listen((dynamic data) {
         onDataReceive(data);
       });
       await initPlatformState();
@@ -100,14 +102,14 @@ class GeolocationBloc extends BaseBloc<Geofence> {
     Connectivity connectivity = Connectivity();
     String wifiBSSID;
     if ((await connectivity.checkConnectivity()) == ConnectivityResult.wifi) {
-      isWifiActive = true;
+      _isWifiActive = true;
       wifiBSSID = await connectivity.getWifiBSSID();
     } else {
-      isWifiActive = false;
+      _isWifiActive = false;
     }
     Geofence geofence =
         await AppDatabase.instance.getGeofenceNear(latLng, wifiBSSID);
-    currentLocation = latLng;
+    _currentLocation = latLng;
 
     sink.add(geofence);
   }
@@ -121,7 +123,7 @@ class GeolocationBloc extends BaseBloc<Geofence> {
 
   networkListener() {
     Connectivity().onConnectivityChanged.listen((ConnectivityResult result) {
-      if (currentLocation != null) onDataReceive(currentLocation);
+      if (_currentLocation != null) onDataReceive(_currentLocation);
     });
   }
 
@@ -155,7 +157,7 @@ class GeolocationBloc extends BaseBloc<Geofence> {
   void stopLocationService() {
     IsolateNameServer.removePortNameMapping(_isolateName);
     BackgroundLocator.unRegisterLocationUpdate();
-    port = null;
+    _port = null;
   }
 
   @override
