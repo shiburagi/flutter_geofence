@@ -18,6 +18,11 @@ samples, guidance on mobile development, and a full API reference.
 2) Run: ```flutter run```
 
 ## Testing
+The project using flutter_driver and [flutter_gherkin](https://pub.dev/packages/flutter_gherkin) for execute automation testing.
+Gherkin or Cucumber able to support **Behaviour-Driven Development(BDD)**, which is help people understand what the script for.
+
+All the list of features are available in https://github.com/shiburagi/setel_geofence/tree/master/test_driver/features.
+
 1) Install package:  ```flutter pub get ```
 2) Run: ```dart test_driver/app_test.dart```
 
