@@ -17,27 +17,9 @@ Future<void> main() {
       ListingStep(),
       ExpectNotExistStep(),
     ]
+    ..onBeforeFlutterDriverConnect
     ..hooks = [CustomHooks()]
     ..order = ExecutionOrder.sequential
-    ..onBeforeFlutterDriverConnect = () async {
-      final Map<String, String> envVars = Platform.environment;
-      final String adbPath =
-          envVars['ANDROID_SDK_ROOT'] + '/platform-tools/adb.exe';
-      await Process.run(adbPath, [
-        'shell',
-        'pm',
-        'grant',
-        'com.example.apppackage',
-        'android.permission.ACCESS_FINE_LOCATION'
-      ]);
-      await Process.run(adbPath, [
-        'shell',
-        'pm',
-        'grant',
-        'com.example.apppackage',
-        'android.permission.ACCESS_COARSE_LOCATION'
-      ]);
-    }
     ..reporters = [
       ProgressReporter(),
       TestRunSummaryReporter(),
@@ -47,5 +29,6 @@ Future<void> main() {
     ..targetAppPath = "test_driver/app.dart"
     // ..tagExpression = "@smoke" // uncomment to see an example of running scenarios based on tag expressions
     ..exitAfterTestRun = true; // set to false if debugging to exit cleanly
+
   return GherkinRunner().execute(config);
 }
