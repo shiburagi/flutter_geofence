@@ -30,6 +30,8 @@ There are **5 test cases** covered,
 4) Status outside
 5) Delete geofence
 
+However, for the permission need manually accept it
+
 All the list of features are available in https://github.com/shiburagi/setel_geofence/tree/master/test_driver/features.
 
 1) Install package:  ```flutter pub get ```
