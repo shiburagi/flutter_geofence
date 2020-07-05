@@ -17,7 +17,6 @@ Future<void> main() {
       ListingStep(),
       ExpectNotExistStep(),
     ]
-    ..onBeforeFlutterDriverConnect
     ..hooks = [CustomHooks()]
     ..order = ExecutionOrder.sequential
     ..reporters = [
