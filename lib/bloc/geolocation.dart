@@ -23,6 +23,7 @@ class GeolocationBloc extends BaseBloc<Geofence> {
   bool get isLocationActive => _isLocationActive;
   bool _serviceEnabled = false;
   PermissionStatus _permissionGranted;
+
   /*
    * Initialize location changed listener
    */
@@ -124,8 +125,15 @@ class GeolocationBloc extends BaseBloc<Geofence> {
 
   networkListener() {
     Connectivity().onConnectivityChanged.listen((ConnectivityResult result) {
-      if (_currentLocation != null) onDataReceive(_currentLocation);
+      refesh();
     });
+  }
+
+  /*
+   *  recalculate and find the nearest geofence 
+   */
+  refesh() {
+    if (_currentLocation != null) onDataReceive(_currentLocation);
   }
 
   static void callback(LocationDto locationDto) async {

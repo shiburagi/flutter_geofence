@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:overlay_support/overlay_support.dart';
 import 'package:provider_boilerplate/bloc/base_bloc.dart';
+import 'package:provider_boilerplate/provider_boilerplate.dart';
+import 'package:setel_geofence/bloc/geolocation.dart';
 import 'package:setel_geofence/resources/database.dart';
 import 'package:setel_geofence/views/dialog.dart';
 
@@ -75,6 +77,8 @@ class GeofenceBloc extends BaseBloc<List<Geofence>> {
       showSimpleNotification(Text("Geofence saved"),
           background: Theme.of(context).accentColor);
       await retrieveData();
+      GeolocationBloc geolocationBloc = Provider.of(context, listen: false);
+      geolocationBloc.refesh();
 
       if (isEdit)
         Navigator.of(context).pop();

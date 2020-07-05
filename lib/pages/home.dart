@@ -1,6 +1,3 @@
-import 'dart:developer';
-
-import 'package:connectivity/connectivity.dart';
 import 'package:flutter/material.dart';
 import 'package:provider_boilerplate/bloc/bloc_state.dart';
 import 'package:setel_geofence/bloc/geolocation.dart';
@@ -59,7 +56,7 @@ class _HomePageState extends BlocState<HomePage, GeolocationBloc>
     return StreamBuilder(
       stream: bloc.stream,
       builder: (context, snapshot) {
-        bool isInside = snapshot.data != null;
+        bool isInside = bloc.data != null;
         Color color = isInside ? Colors.teal : Theme.of(context).errorColor;
         return ConstrainedBox(
           constraints: BoxConstraints(
@@ -72,19 +69,7 @@ class _HomePageState extends BlocState<HomePage, GeolocationBloc>
               crossAxisAlignment: CrossAxisAlignment.center,
               mainAxisSize: MainAxisSize.min,
               children: [
-                Container(
-                  decoration: BoxDecoration(
-                      border: Border.all(color: color), color: color),
-                  padding: EdgeInsets.symmetric(horizontal: 24, vertical: 16),
-                  child: Text(
-                    isInside ? "Inside" : "Outside",
-                    key: const Key("status"),
-                    style: Theme.of(context)
-                        .textTheme
-                        .headline5
-                        .copyWith(color: Colors.white),
-                  ),
-                ),
+                buildStatus(color, isInside, context),
                 SizedBox(
                   height: 16,
                 ),
@@ -104,6 +89,19 @@ class _HomePageState extends BlocState<HomePage, GeolocationBloc>
           ),
         );
       },
+    );
+  }
+
+  Container buildStatus(Color color, bool isInside, BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(border: Border.all(color: color), color: color),
+      padding: EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+      child: Text(
+        isInside ? "Inside" : "Outside",
+        key: const Key("status"),
+        style:
+            Theme.of(context).textTheme.headline5.copyWith(color: Colors.white),
+      ),
     );
   }
 

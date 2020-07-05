@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 import 'package:flutter_gherkin/flutter_gherkin.dart';
 import 'package:gherkin/gherkin.dart';
 import 'package:glob/glob.dart';
@@ -18,6 +19,25 @@ Future<void> main() {
     ]
     ..hooks = [CustomHooks()]
     ..order = ExecutionOrder.sequential
+    ..onBeforeFlutterDriverConnect = () async {
+      final Map<String, String> envVars = Platform.environment;
+      final String adbPath =
+          envVars['ANDROID_SDK_ROOT'] + '/platform-tools/adb.exe';
+      await Process.run(adbPath, [
+        'shell',
+        'pm',
+        'grant',
+        'com.example.apppackage',
+        'android.permission.ACCESS_FINE_LOCATION'
+      ]);
+      await Process.run(adbPath, [
+        'shell',
+        'pm',
+        'grant',
+        'com.example.apppackage',
+        'android.permission.ACCESS_COARSE_LOCATION'
+      ]);
+    }
     ..reporters = [
       ProgressReporter(),
       TestRunSummaryReporter(),
