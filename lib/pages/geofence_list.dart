@@ -87,7 +87,7 @@ class _GeofenceListPageState extends BlocState<GeofenceListPage, GeofenceBloc> {
                       Icons.delete,
                       color: Theme.of(context).errorColor,
                     ),
-                    onPressed: () => bloc.delete(geofence)),
+                    onPressed: () => bloc.delete(context, geofence)),
               ],
             ),
           ),

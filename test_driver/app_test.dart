@@ -6,6 +6,7 @@ import 'package:glob/glob.dart';
 import 'hooks/custom.dart';
 import 'steps/list.dart';
 import 'steps/navigation.dart';
+import 'steps/no_found.dart';
 
 Future<void> main() {
   final config = FlutterTestConfiguration()
@@ -13,6 +14,7 @@ Future<void> main() {
     ..stepDefinitions = [
       NavigationStep(),
       ListingStep(),
+      ExpectNotExistStep(),
     ]
     ..hooks = [CustomHooks()]
     ..order = ExecutionOrder.sequential

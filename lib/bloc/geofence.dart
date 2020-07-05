@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:overlay_support/overlay_support.dart';
 import 'package:provider_boilerplate/bloc/base_bloc.dart';
 import 'package:setel_geofence/resources/database.dart';
+import 'package:setel_geofence/views/dialog.dart';
 
 import '../entities/geofence.dart';
 
@@ -85,8 +86,11 @@ class GeofenceBloc extends BaseBloc<List<Geofence>> {
   /*
    * Method to trigger remove action and delete geofence record in db
    */
-  delete(Geofence geofence) async {
-    if (await AppDatabase.instance.deleteGeofence(geofence) > 0)
+  delete(BuildContext context, Geofence geofence) async {
+    bool isConfirm = await showConfirmationDialog(
+        context, "Are you sure want delete this geofence?");
+    if (isConfirm == true &&
+        await AppDatabase.instance.deleteGeofence(geofence) > 0)
       await retrieveData();
   }
 
