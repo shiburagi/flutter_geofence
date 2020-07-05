@@ -14,6 +14,8 @@ For help getting started with Flutter, view our
 samples, guidance on mobile development, and a full API reference.
 
 ## Setup & Execute
+This project develop & written using [VS Code](https://code.visualstudio.com/).
+
 1) Install package:  ```flutter pub get ```
 2) Run: ```flutter run```
 
