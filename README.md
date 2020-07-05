@@ -23,6 +23,12 @@ https://drive.google.com/file/d/1fU-Eqgkxaw_AP_gyL7DTdzBwaY4qm8ih/view?usp=shari
 ## Testing
 The project using flutter_driver and [flutter_gherkin](https://pub.dev/packages/flutter_gherkin) for execute automation testing.
 Gherkin or Cucumber able to support **Behaviour-Driven Development(BDD)**, which is make test script more understandable.
+There are **5 test cases** covered,
+1) Add Geofence
+2) Status inside
+3) Edit Geofence
+4) Status outside
+5) Delete geofence
 
 All the list of features are available in https://github.com/shiburagi/setel_geofence/tree/master/test_driver/features.
 
