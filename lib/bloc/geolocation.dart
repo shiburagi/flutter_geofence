@@ -83,7 +83,8 @@ class GeolocationBloc extends BaseBloc<Geofence> {
       _port = ReceivePort();
       IsolateNameServer.registerPortWithName(_port.sendPort, _isolateName);
       _port.listen((dynamic data) {
-        onDataReceive(data);
+        LocationDto dto = data;
+        onDataReceive(LatLng(dto.latitude, dto.longitude));
       });
       await initPlatformState();
       networkListener();
